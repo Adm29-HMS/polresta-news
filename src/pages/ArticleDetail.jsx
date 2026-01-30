@@ -42,9 +42,9 @@ const ArticleDetail = () => {
         );
     }
 
-    const imageUrl = article.cover
+    const imageUrl = article.cover && !article.cover.includes('placehold.co')
         ? (article.cover.startsWith('http') ? article.cover : `${import.meta.env.VITE_API_URL}/storage/${article.cover}`)
-        : 'https://placehold.co/800x500';
+        : null;
 
     const pageUrl = window.location.href;
     const siteName = 'TBNews Polri - Polresta Sorong Kota';
@@ -60,7 +60,7 @@ const ArticleDetail = () => {
                 <meta property="og:url" content={pageUrl} />
                 <meta property="og:title" content={article.judul} />
                 <meta property="og:description" content={article.ringkasan || article.konten?.substring(0, 160)} />
-                <meta property="og:image" content={imageUrl} />
+                <meta property="og:image" content={imageUrl || '/src/assets/TBNewsSorkot.png'} />
                 <meta property="og:site_name" content={siteName} />
 
                 {/* Twitter */}
@@ -68,17 +68,25 @@ const ArticleDetail = () => {
                 <meta name="twitter:url" content={pageUrl} />
                 <meta name="twitter:title" content={article.judul} />
                 <meta name="twitter:description" content={article.ringkasan || article.konten?.substring(0, 160)} />
-                <meta name="twitter:image" content={imageUrl} />
+                <meta name="twitter:image" content={imageUrl || '/src/assets/TBNewsSorkot.png'} />
             </Helmet>
 
             <article className="max-w-4xl mx-auto bg-white rounded-xl shadow-sm overflow-hidden">
                 {/* Header Image */}
-                <div className="relative w-full aspect-video md:aspect-[21/9]">
-                    <img
-                        src={imageUrl}
-                        alt={article.judul}
-                        className="w-full h-full object-cover"
-                    />
+                <div className="relative w-full aspect-video md:aspect-[21/9] bg-gray-900 flex items-center justify-center overflow-hidden">
+                    {imageUrl ? (
+                        <img
+                            src={imageUrl}
+                            alt={article.judul}
+                            className="w-full h-full object-cover"
+                            onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                        />
+                    ) : null}
+                    
+                    {/* Fallback Container */}
+                    <div className={`absolute inset-0 flex items-center justify-center bg-gray-800 ${imageUrl ? 'hidden' : 'flex'}`}>
+                         <img src="/src/assets/TBNewsSorkotWhite.png" alt="Polresta Sorong Kota" className="w-1/3 h-auto opacity-50 object-contain" />
+                    </div>
                 </div>
 
                 <div className="p-6 md:p-8 lg:p-10 space-y-6">
